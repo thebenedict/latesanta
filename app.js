@@ -71,54 +71,54 @@ app.use(function(err, req, res, next) {
 });
 
 // main code -- where to put this?
-db.connect(url, function(err) {
-  assert.equal(null, err);
-  console.log("Mongolab connection established");
+// db.connect(url, function(err) {
+//   assert.equal(null, err);
+//   console.log("Mongolab connection established");
 
-  var processTweet = function(tweet) {
-    var encodedTweetText = encodeURIComponent(tweet.text);
-    var sentimentUrl = 'http://www.sentiment140.com/api/classify?appid=' + process.env.S140_APP_ID + '&text=' + encodedTweetText + '&tid=' + tweet.id_str;
+//   var processTweet = function(tweet) {
+//     var encodedTweetText = encodeURIComponent(tweet.text);
+//     var sentimentUrl = 'http://www.sentiment140.com/api/classify?appid=' + process.env.S140_APP_ID + '&text=' + encodedTweetText + '&tid=' + tweet.id_str;
 
-    request(sentimentUrl, function (error, response, body) {
-      if (!error && response.statusCode == 200) {
-        var parsed = JSON.parse(body);
-        console.log("\tpolarity: " + parsed["results"]["polarity"]);
-        var updateResult = db.get().collection('tweets').updateOne (
-          { "id_str": tweet.id_str },
-          { $set: { "polarity": parsed["results"]["polarity"] } }, 
-          function(err, results) {
-            //callback();
-          }
-        );
-      }
-    })
-  }
+//     request(sentimentUrl, function (error, response, body) {
+//       if (!error && response.statusCode == 200) {
+//         var parsed = JSON.parse(body);
+//         console.log("\tpolarity: " + parsed["results"]["polarity"]);
+//         var updateResult = db.get().collection('tweets').updateOne (
+//           { "id_str": tweet.id_str },
+//           { $set: { "polarity": parsed["results"]["polarity"] } }, 
+//           function(err, results) {
+//             //callback();
+//           }
+//         );
+//       }
+//     })
+//   }
 
-  var Twit = require('twit');
+//   var Twit = require('twit');
 
-  var T = new Twit({
-      consumer_key:         process.env.TWITTER_CONSUMER_KEY
-    , consumer_secret:      process.env.TWITTER_CONSUMER_SECRET
-    , access_token:         process.env.TWITTER_ACCESS_TOKEN
-    , access_token_secret:  process.env.TWITTER_ACCESS_TOKEN_SECRET
-  })
+//   var T = new Twit({
+//       consumer_key:         process.env.TWITTER_CONSUMER_KEY
+//     , consumer_secret:      process.env.TWITTER_CONSUMER_SECRET
+//     , access_token:         process.env.TWITTER_ACCESS_TOKEN
+//     , access_token_secret:  process.env.TWITTER_ACCESS_TOKEN_SECRET
+//   })
 
-  var stream = T.stream('statuses/filter', { track: ['upshelp', 'fedexhelp', 'uspshelp'] })
+//   var stream = T.stream('statuses/filter', { track: ['upshelp', 'fedexhelp', 'uspshelp'] })
 
-  stream.on('tweet', function (tweet) {
-    console.log(tweet.text)
+//   stream.on('tweet', function (tweet) {
+//     console.log(tweet.text)
 
-    db.get().collection('tweets').insertOne(tweet, function(err, result) {
-      assert.equal(err, null);
-      console.log("\tTweet saved to db.");
-      processTweet(tweet);
-    });
-  });
+//     db.get().collection('tweets').insertOne(tweet, function(err, result) {
+//       assert.equal(err, null);
+//       console.log("\tTweet saved to db.");
+//       processTweet(tweet);
+//     });
+//   });
 
-  stream.on('error', function(e) {
-    console.log(e)
-  });
-});
+//   stream.on('error', function(e) {
+//     console.log(e)
+//   });
+// });
 
 
 module.exports = app;
