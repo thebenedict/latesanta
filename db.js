@@ -2,6 +2,7 @@ var MongoClient = require('mongodb').MongoClient
 
 var state = {
   db: null,
+  tweetCollection: null,
 }
 
 exports.connect = function(url, done) {
@@ -10,12 +11,17 @@ exports.connect = function(url, done) {
   MongoClient.connect(url, function(err, db) {
     if (err) return done(err)
     state.db = db
+    state.tweetCollection = db.collection('tweets')
     done()
   })
 }
 
 exports.get = function() {
   return state.db
+}
+
+exports.getTweetCollection = function() {
+  return state.tweetCollection
 }
 
 exports.close = function(done) {

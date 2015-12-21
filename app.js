@@ -21,8 +21,9 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var dbUser = process.env.MONGOLAB_DB_USERNAME;
 var dbPass = process.env.MONGOLAB_DB_PASSWORD;
+var dbPath = process.env.MONGOLAB_DB_PATH;
 var db = require('./db')
-var url = 'mongodb://' + dbUser + ':' + dbPass + '@ds033915.mongolab.com:33915/latesanta';
+var url = 'mongodb://' + dbUser + ':' + dbPass + dbPath;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -107,7 +108,8 @@ db.connect(url, function(err) {
 
   stream.on('tweet', function (tweet) {
     console.log(tweet.text)
-
+    app.io.sockets.emit("tweet",tweet);
+    
     db.get().collection('tweets').insertOne(tweet, function(err, result) {
       assert.equal(err, null);
       console.log("\tTweet saved to db.");
