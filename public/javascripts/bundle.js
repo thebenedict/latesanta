@@ -53,7 +53,7 @@ var Tweets = React.createClass({
     // Get reference to this item
     var that = this;
     // Set up the connection
-    var socket = io.connect('http://localhost:3000/');
+    var socket = io();
     // Handle incoming messages
     socket.on('tweet', function (data) {
       console.log("hello tweet!");
